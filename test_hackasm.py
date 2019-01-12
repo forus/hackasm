@@ -19,6 +19,14 @@ class HackAsmTestCase(unittest.TestCase):
         self.assertEqual(code, '1' * 16)
 
 
+    def test_zero_c_command(self):
+        code = hackasm.assemble('0')
+        self.assertEqual(code, '111' + '0' + '101010' + '000' + '000')
+
+
+    def test_one_c_command(self):
+        code = hackasm.assemble('1')
+        self.assertEqual(code, '111' + '0' + '111111' + '000' + '000')
 
 
 if __name__ == '__main__':
