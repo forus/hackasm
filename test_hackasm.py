@@ -135,5 +135,12 @@ class HackAsmTestCase(unittest.TestCase):
         actual_code = hackasm.assemble(comp)
         self.assertEqual(actual_code, '111' + a + code + '000' + '000')
 
+
+    def test_unknown_c_command(self):
+        with self.assertRaises(ValueError) as err:
+            hackasm.assemble('U')
+        self.assertEqual(str(err.exception), 'Symbol "U" is not known.')
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -44,4 +44,6 @@ def assemble(asm):
     elif asm in comp_m_symbol_to_code:
         comp = comp_m_symbol_to_code[asm]
         a = '1'
+    else:
+        raise ValueError('Symbol "' + str(asm) + '" is not known.')
     return '111{}{}000000'.format(a, comp)
