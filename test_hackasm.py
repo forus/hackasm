@@ -91,6 +91,46 @@ class HackAsmTestCase(unittest.TestCase):
         self._test_c_command_comp(comp='D|A', a='0', code='010101')
 
 
+    def test_m_c_command(self):
+        self._test_c_command_comp(comp='M', a='1', code='110000')
+
+
+    def test_not_m_c_command(self):
+        self._test_c_command_comp(comp='!M', a='1', code='110001')
+
+
+    def test_minus_m_c_command(self):
+        self._test_c_command_comp(comp='-M', a='1', code='110011')
+
+
+    def test_m_plus_one_c_command(self):
+        self._test_c_command_comp(comp='M+1', a='1', code='110111')
+
+
+    def test_m_minus_one_c_command(self):
+        self._test_c_command_comp(comp='M-1', a='1', code='110010')
+
+
+    def test_d_plus_m_c_command(self):
+        self._test_c_command_comp(comp='D+M', a='1', code='000010')
+
+
+    def test_d_minus_m_c_command(self):
+        self._test_c_command_comp(comp='D-M', a='1', code='010011')
+
+
+    def test_m_minus_d_c_command(self):
+        self._test_c_command_comp(comp='M-D', a='1', code='000111')
+
+
+    def test_d_and_m_c_command(self):
+        self._test_c_command_comp(comp='D&M', a='1', code='000000')
+
+
+    def test_d_or_m_c_command(self):
+        self._test_c_command_comp(comp='D|M', a='1', code='010101')
+
+
     def _test_c_command_comp(self, comp, a, code):
         actual_code = hackasm.assemble(comp)
         self.assertEqual(actual_code, '111' + a + code + '000' + '000')

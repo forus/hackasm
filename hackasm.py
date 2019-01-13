@@ -18,9 +18,30 @@ comp_a_symbol_to_code = {
             'D&A': '000000',
             'D|A': '010101',
         }
+
+
+comp_m_symbol_to_code = {
+            'M': '110000',
+            '!M': '110001',
+            '-M': '110011',
+            'M+1': '110111',
+            'M-1': '110010',
+            'D+M': '000010',
+            'D-M': '010011',
+            'M-D': '000111',
+            'D&M': '000000',
+            'D|M': '010101',
+        }
+
+
 def assemble(asm):
     if asm.startswith('@'):
         val = int(asm.lstrip('@'))
         return '{0:016b}'.format(val)
-    comp = comp_a_symbol_to_code[asm]
-    return '1110{}000000'.format(comp)
+    if asm in comp_a_symbol_to_code: 
+        comp = comp_a_symbol_to_code[asm]
+        a = '0'
+    elif asm in comp_m_symbol_to_code:
+        comp = comp_m_symbol_to_code[asm]
+        a = '1'
+    return '111{}{}000000'.format(a, comp)
