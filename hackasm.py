@@ -3,10 +3,15 @@ def assemble(asm):
         val = int(asm.lstrip('@'))
         return '{0:016b}'.format(val)
     if '=' in asm:
-        asm_dest, asm_comp = asm.split('=')
+        asm_dest, asm_comp_jump = asm.split('=')
     else:
         asm_dest = ''
-        asm_comp = asm
+        asm_comp_jump = asm
+    if ';' in asm_comp_jump:
+        asm_comp, asm_jump = asm_comp_jump.split(';')
+    else:
+        asm_comp = asm_comp_jump
+        asm_jump = ''
     if asm_comp in _comp_a_symbol_to_code:
         comp_code = _comp_a_symbol_to_code[asm_comp]
         a = '0'
@@ -16,8 +21,13 @@ def assemble(asm):
     else:
         raise ValueError('Symbol "' + str(asm_comp) + '" is not known.')
 
+    if asm_jump in _jumps:
+        jump_code = _jumps[asm_jump]
+    else:
+        jump_code = '000'
+
     dest_code = _to_dest_code(asm_dest)
-    return '111{}{}{}000'.format(a, comp_code, dest_code)
+    return '111{}{}{}{}'.format(a, comp_code, dest_code, jump_code)
 
 
 _comp_a_symbol_to_code = {
@@ -53,6 +63,17 @@ _comp_m_symbol_to_code = {
     'M-D': '000111',
     'D&M': '000000',
     'D|M': '010101',
+}
+
+
+_jumps = {
+    'JGT': '001',
+    'JEQ': '010',
+    'JGE': '011',
+    'JLT': '100',
+    'JNE': '101',
+    'JLE': '110',
+    'JMP': '111',
 }
 
 

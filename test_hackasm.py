@@ -168,5 +168,40 @@ class HackAsmTestCase(unittest.TestCase):
         self.assertEqual(str(err.exception), '"A" destination appears multiple times.')
 
 
+    def test_jgt_jump(self):
+        actual_code = hackasm.assemble('0;JGT')
+        self.assertEqual(actual_code[13:], '001')
+
+
+    def test_jeq_jump(self):
+        actual_code = hackasm.assemble('0;JEQ')
+        self.assertEqual(actual_code[13:], '010')
+
+
+    def test_jge_jump(self):
+        actual_code = hackasm.assemble('0;JGE')
+        self.assertEqual(actual_code[13:], '011')
+
+
+    def test_jlt_jump(self):
+        actual_code = hackasm.assemble('0;JLT')
+        self.assertEqual(actual_code[13:], '100')
+
+
+    def test_jne_jump(self):
+        actual_code = hackasm.assemble('0;JNE')
+        self.assertEqual(actual_code[13:], '101')
+
+
+    def test_jle_jump(self):
+        actual_code = hackasm.assemble('0;JLE')
+        self.assertEqual(actual_code[13:], '110')
+
+
+    def test_jmp_jump(self):
+        actual_code = hackasm.assemble('0;JMP')
+        self.assertEqual(actual_code[13:], '111')
+
+
 if __name__ == '__main__':
     unittest.main()
