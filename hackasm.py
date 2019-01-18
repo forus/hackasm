@@ -38,6 +38,9 @@ def assemble(asm):
     if asm.startswith('@'):
         val = int(asm.lstrip('@'))
         return '{0:016b}'.format(val)
+    dest = ''
+    if '=' in asm:
+        dest, asm = asm.split('=')
     if asm in comp_a_symbol_to_code: 
         comp = comp_a_symbol_to_code[asm]
         a = '0'
@@ -46,4 +49,18 @@ def assemble(asm):
         a = '1'
     else:
         raise ValueError('Symbol "' + str(asm) + '" is not known.')
-    return '111{}{}000000'.format(a, comp)
+    dest_code = ''
+    if 'A' in dest:
+       dest_code += '1'
+    else:
+       dest_code += '0'
+    if 'M' in dest:
+       dest_code += '1'
+    else:
+       dest_code += '0'
+    if 'D' in dest:
+       dest_code += '1'
+    else:
+       dest_code += '0'
+
+    return '111{}{}{}000'.format(a, comp, dest_code)

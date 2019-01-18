@@ -142,5 +142,20 @@ class HackAsmTestCase(unittest.TestCase):
         self.assertEqual(str(err.exception), 'Symbol "U" is not known.')
 
 
+    def test_a_destination(self):
+        actual_code = hackasm.assemble('A=0')
+        self.assertEqual(actual_code[10:13], '100')
+
+
+    def test_m_destination(self):
+        actual_code = hackasm.assemble('M=0')
+        self.assertEqual(actual_code[10:13], '010')
+
+
+    def test_d_destination(self):
+        actual_code = hackasm.assemble('D=0')
+        self.assertEqual(actual_code[10:13], '001')
+
+
 if __name__ == '__main__':
     unittest.main()
