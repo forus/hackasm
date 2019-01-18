@@ -41,6 +41,11 @@ def assemble(asm):
     dest = ''
     if '=' in asm:
         dest, asm = asm.split('=')
+    for indx, letter in enumerate(dest):
+        if letter not in 'AMD':
+            raise ValueError('"{}" is wrong destination.'.format(letter))
+        if indx < len(dest) and letter in dest[indx+1:]:
+            raise ValueError('"{}" destination appears multiple times.'.format(letter))
     if asm in comp_a_symbol_to_code: 
         comp = comp_a_symbol_to_code[asm]
         a = '0'

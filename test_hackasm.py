@@ -157,5 +157,16 @@ class HackAsmTestCase(unittest.TestCase):
         self.assertEqual(actual_code[10:13], '001')
 
 
+    def test_invalid_destination(self):
+        with self.assertRaises(ValueError) as err:
+            hackasm.assemble('X=0')
+        self.assertEqual(str(err.exception), '"X" is wrong destination.')
+
+    def test_repeated_destination(self):
+        with self.assertRaises(ValueError) as err:
+            hackasm.assemble('AMA=0')
+        self.assertEqual(str(err.exception), '"A" destination appears multiple times.')
+
+
 if __name__ == '__main__':
     unittest.main()
