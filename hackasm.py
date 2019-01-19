@@ -18,14 +18,6 @@ def _assemble_line(asm):
     return _assemble_command_line(asm)
 
 
-def _assemble_command_line(asm):
-    asm_dest, asm_comp, asm_jump = _to_c_command_parts(asm)
-    dest_code = _to_dest_code(asm_dest)
-    comp_code, a = _to_comp_code_and_a_flag(asm_comp)
-    jump_code = _to_jump_code(asm_jump)
-    return '111{}{}{}{}'.format(a, comp_code, dest_code, jump_code)
-
-
 def _assemble_address_line(asm):
     address = asm.lstrip('@')
     if address in _predefined_address_symbols:
@@ -35,28 +27,6 @@ def _assemble_address_line(asm):
     else:
         raise ValueError('"{}" address symbol is not defined.'.format(address))
     return '{0:016b}'.format(val)
-
-
-def _to_c_command_parts(asm):
-    if '=' in asm:
-        asm_dest, asm_comp_jump = asm.split('=')
-    else:
-        asm_dest = 'null'
-        asm_comp_jump = asm
-    if ';' in asm_comp_jump:
-        asm_comp, asm_jump = asm_comp_jump.split(';')
-    else:
-        asm_comp = asm_comp_jump
-        asm_jump = 'null'
-    return asm_dest, asm_comp, asm_jump
-
-
-def _to_jump_code(asm_jump):
-    if asm_jump in _jumps:
-        jump_code = _jumps[asm_jump]
-    elif asm_jump:
-        raise ValueError('"{}" jump is not supported.'.format(asm_jump))
-    return jump_code
 
 
 _predefined_address_symbols = {
@@ -83,6 +53,69 @@ _predefined_address_symbols = {
     'SCREEN': 16384,
     'KBD': 24576,
 }
+
+
+def _assemble_command_line(asm):
+    asm_dest, asm_comp, asm_jump = _to_c_command_parts(asm)
+    dest_code = _to_dest_code(asm_dest)
+    comp_code, a = _to_comp_code_and_a_flag(asm_comp)
+    jump_code = _to_jump_code(asm_jump)
+    return '111{}{}{}{}'.format(a, comp_code, dest_code, jump_code)
+
+
+def _to_c_command_parts(asm):
+    if '=' in asm:
+        asm_dest, asm_comp_jump = asm.split('=')
+    else:
+        asm_dest = 'null'
+        asm_comp_jump = asm
+    if ';' in asm_comp_jump:
+        asm_comp, asm_jump = asm_comp_jump.split(';')
+    else:
+        asm_comp = asm_comp_jump
+        asm_jump = 'null'
+    return asm_dest, asm_comp, asm_jump
+
+
+def _to_dest_code(asm_dest):
+    if asm_dest == 'null':
+        return '000'
+    _check_dest(asm_dest)
+    dest_code = ''
+    if 'A' in asm_dest:
+       dest_code += '1'
+    else:
+       dest_code += '0'
+    if 'M' in asm_dest:
+       dest_code += '1'
+    else:
+       dest_code += '0'
+    if 'D' in asm_dest:
+       dest_code += '1'
+    else:
+       dest_code += '0'
+
+    return dest_code
+
+
+def _check_dest(asm_dest):
+    for indx, letter in enumerate(asm_dest):
+        if letter not in 'AMD':
+            raise ValueError('"{}" is wrong destination.'.format(letter))
+        if indx < len(asm_dest) and letter in asm_dest[indx+1:]:
+            raise ValueError('"{}" destination appears multiple times.'.format(letter))
+
+
+def _to_comp_code_and_a_flag(asm_comp):
+    if asm_comp in _comp_a_symbol_to_code:
+        comp_code = _comp_a_symbol_to_code[asm_comp]
+        a = '0'
+    elif asm_comp in _comp_m_symbol_to_code:
+        comp_code = _comp_m_symbol_to_code[asm_comp]
+        a = '1'
+    else:
+        raise ValueError('Symbol "' + str(asm_comp) + '" is not known.')
+    return comp_code, a
 
 
 _comp_a_symbol_to_code = {
@@ -121,6 +154,14 @@ _comp_m_symbol_to_code = {
 }
 
 
+def _to_jump_code(asm_jump):
+    if asm_jump in _jumps:
+        jump_code = _jumps[asm_jump]
+    elif asm_jump:
+        raise ValueError('"{}" jump is not supported.'.format(asm_jump))
+    return jump_code
+
+
 _jumps = {
     'null': '000',
     'JGT': '001',
@@ -131,44 +172,3 @@ _jumps = {
     'JLE': '110',
     'JMP': '111',
 }
-
-
-def _to_dest_code(asm_dest):
-    if asm_dest == 'null':
-        return '000'
-    _check_dest(asm_dest)
-    dest_code = ''
-    if 'A' in asm_dest:
-       dest_code += '1'
-    else:
-       dest_code += '0'
-    if 'M' in asm_dest:
-       dest_code += '1'
-    else:
-       dest_code += '0'
-    if 'D' in asm_dest:
-       dest_code += '1'
-    else:
-       dest_code += '0'
-
-    return dest_code
-
-
-def _to_comp_code_and_a_flag(asm_comp):
-    if asm_comp in _comp_a_symbol_to_code:
-        comp_code = _comp_a_symbol_to_code[asm_comp]
-        a = '0'
-    elif asm_comp in _comp_m_symbol_to_code:
-        comp_code = _comp_m_symbol_to_code[asm_comp]
-        a = '1'
-    else:
-        raise ValueError('Symbol "' + str(asm_comp) + '" is not known.')
-    return comp_code, a
-
-
-def _check_dest(asm_dest):
-    for indx, letter in enumerate(asm_dest):
-        if letter not in 'AMD':
-            raise ValueError('"{}" is wrong destination.'.format(letter))
-        if indx < len(asm_dest) and letter in asm_dest[indx+1:]:
-            raise ValueError('"{}" destination appears multiple times.'.format(letter))
