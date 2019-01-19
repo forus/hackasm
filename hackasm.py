@@ -1,5 +1,12 @@
+import re
+
 def assemble(asm):
-    return '\n'.join([_assemble_line(line) for line in asm.splitlines() if line.strip()])
+    return '\n'.join([_assemble_line(_strip_asm_line(line)) for line in asm.splitlines() if line.strip()])
+
+
+def _strip_asm_line(asm):
+    return re.sub('\s+', '', asm)
+
 
 def _assemble_line(asm):
     if asm.startswith('@'):

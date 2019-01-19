@@ -219,5 +219,10 @@ class HackAsmTestCase(unittest.TestCase):
         self.assertEqual(actual_code, '0' * 16 + '\n' + '0' * 16)
 
 
+    def test_spaces_in_command(self):
+        actual_code = hackasm.assemble('\t@1\n\tAMD = 1; JMP')
+        self.assertEqual(actual_code, '0000000000000001\n1110111111111111')
+
+
 if __name__ == '__main__':
     unittest.main()
