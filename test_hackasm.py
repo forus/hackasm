@@ -214,5 +214,10 @@ class HackAsmTestCase(unittest.TestCase):
         self.assertEqual(actual_code, '1110111111111111\n1110111111111111')
 
 
+    def test_blank_lines(self):
+        actual_code = hackasm.assemble('\n \n@0\n\n@0\n\t\n')
+        self.assertEqual(actual_code, '0' * 16 + '\n' + '0' * 16)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -1,5 +1,5 @@
 def assemble(asm):
-    return '\n'.join([_assemble_line(line) for line in asm.splitlines()])
+    return '\n'.join([_assemble_line(line) for line in asm.splitlines() if line.strip()])
 
 def _assemble_line(asm):
     if asm.startswith('@'):
