@@ -1,4 +1,7 @@
 def assemble(asm):
+    return '\n'.join([_assemble_line(line) for line in asm.splitlines()])
+
+def _assemble_line(asm):
     if asm.startswith('@'):
         val = int(asm.lstrip('@'))
         return '{0:016b}'.format(val)

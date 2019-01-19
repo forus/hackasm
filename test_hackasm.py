@@ -209,6 +209,9 @@ class HackAsmTestCase(unittest.TestCase):
         self.assertEqual(str(err.exception), '"JJJ" jump is not supported.')
 
 
+    def test_multiline_commands(self):
+        actual_code = hackasm.assemble('AMD=1;JMP\nAMD=1;JMP')
+        self.assertEqual(actual_code, '1110111111111111\n1110111111111111')
 
 
 if __name__ == '__main__':
