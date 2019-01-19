@@ -23,6 +23,8 @@ def assemble(asm):
 
     if asm_jump in _jumps:
         jump_code = _jumps[asm_jump]
+    elif asm_jump:
+        raise ValueError('"{}" jump is not supported.'.format(asm_jump))
     else:
         jump_code = '000'
 

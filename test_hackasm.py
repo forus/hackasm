@@ -203,5 +203,13 @@ class HackAsmTestCase(unittest.TestCase):
         self.assertEqual(actual_code[13:], '111')
 
 
+    def test_invalid_jump(self):
+        with self.assertRaises(ValueError) as err:
+            hackasm.assemble('0;JJJ')
+        self.assertEqual(str(err.exception), '"JJJ" jump is not supported.')
+
+
+
+
 if __name__ == '__main__':
     unittest.main()
