@@ -14,7 +14,13 @@ def _strip_asm_line(asm):
 
 def _assemble_line(asm):
     if asm.startswith('@'):
-        val = int(asm.lstrip('@'))
+        address = asm.lstrip('@')
+        if address in _predefined_address_symbols:
+            val = _predefined_address_symbols[address]
+        elif address.isdigit():
+            val = int(address)
+        else:
+            raise ValueError('"{}" address symbol is not defined.'.format(address))
         return '{0:016b}'.format(val)
     if '=' in asm:
         asm_dest, asm_comp_jump = asm.split('=')
@@ -44,6 +50,32 @@ def _assemble_line(asm):
 
     dest_code = _to_dest_code(asm_dest)
     return '111{}{}{}{}'.format(a, comp_code, dest_code, jump_code)
+
+
+_predefined_address_symbols = {
+    'SP': 0,
+    'LCL': 1,
+    'ARG': 2,
+    'THIS': 3,
+    'THAT': 4,
+    'R1': 1,
+    'R2': 2,
+    'R3': 3,
+    'R4': 4,
+    'R5': 5,
+    'R6': 6,
+    'R7': 7,
+    'R8': 8,
+    'R9': 9,
+    'R10': 10,
+    'R11': 11,
+    'R12': 12,
+    'R13': 13,
+    'R14': 14,
+    'R15': 15,
+    'SCREEN': 16384,
+    'KBD': 24576,
+}
 
 
 _comp_a_symbol_to_code = {

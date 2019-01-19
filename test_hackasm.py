@@ -234,5 +234,52 @@ class HackAsmTestCase(unittest.TestCase):
         self.assertEqual(actual_code, '0000000000000001')
 
 
+    def test_sp_predefined_symbol(self):
+        actual_code = hackasm.assemble('@SP')
+        self.assertEqual(actual_code, '0' * 16)
+
+
+    def test_lcl_predefined_symbol(self):
+        actual_code = hackasm.assemble('@LCL')
+        self.assertEqual(actual_code, '0' * 15 + '1')
+
+
+    def test_arg_predefined_symbol(self):
+        actual_code = hackasm.assemble('@ARG')
+        self.assertEqual(actual_code, '0' * 14 + '10')
+
+
+    def test_this_predefined_symbol(self):
+        actual_code = hackasm.assemble('@THIS')
+        self.assertEqual(actual_code, '0' * 14 + '11')
+
+
+    def test_that_predefined_symbol(self):
+        actual_code = hackasm.assemble('@THAT')
+        self.assertEqual(actual_code, '0' * 13 + '100')
+
+
+    def test_screen_predefined_symbol(self):
+        actual_code = hackasm.assemble('@SCREEN')
+        self.assertEqual(int(actual_code, 2), 16384)
+
+
+    def test_kbd_predefined_symbol(self):
+        actual_code = hackasm.assemble('@KBD')
+        self.assertEqual(int(actual_code, 2), 24576)
+
+
+    def test_r_predefined_symbol(self):
+        for i in range(1, 15):
+            actual_code = hackasm.assemble('@R' + str(i))
+            self.assertEqual(int(actual_code, 2), i)
+
+
+    def test_r_invalid_predefined_symbol(self):
+        with self.assertRaises(ValueError) as err:
+            hackasm.assemble('@R16')
+        self.assertEqual(str(err.exception), '"R16" address symbol is not defined.')
+
+
 if __name__ == '__main__':
     unittest.main()
