@@ -224,5 +224,15 @@ class HackAsmTestCase(unittest.TestCase):
         self.assertEqual(actual_code, '0000000000000001\n1110111111111111')
 
 
+    def test_comments_in_command(self):
+        actual_code = hackasm.assemble('@1//Comment')
+        self.assertEqual(actual_code, '0000000000000001')
+
+
+    def test_whole_line_comment(self):
+        actual_code = hackasm.assemble('//Comment\n@1')
+        self.assertEqual(actual_code, '0000000000000001')
+
+
 if __name__ == '__main__':
     unittest.main()
