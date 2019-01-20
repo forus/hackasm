@@ -1,8 +1,10 @@
 import re
 
+
 def assemble(asm):
+    variable_symbols = {}
     return '\n'.join([
-        _assemble_line(_strip_asm_line(line))
+        _assemble_line(_strip_asm_line(line), variable_symbols)
         for line in asm.splitlines()
         if _strip_asm_line(line)])
 
@@ -12,20 +14,23 @@ def _strip_asm_line(asm):
     return re.sub('\s+', '', no_comment_asm)
 
 
-def _assemble_line(asm):
+def _assemble_line(asm, var_to_address):
     if asm.startswith('@'):
-        return _assemble_address_line(asm)
+        return _assemble_address_line(asm, var_to_address)
     return _assemble_command_line(asm)
 
 
-def _assemble_address_line(asm):
+def _assemble_address_line(asm, var_to_address):
     address = asm.lstrip('@')
-    if address in _predefined_address_symbols:
-        val = _predefined_address_symbols[address]
-    elif address.isdigit():
+    if address.isdigit():
         val = int(address)
+    elif address in _predefined_address_symbols:
+        val = _predefined_address_symbols[address]
+    elif address in var_to_address:
+        val = var_to_address[address]
     else:
-        raise ValueError('"{}" address symbol is not defined.'.format(address))
+        var_to_address[address] = len(var_to_address) + 16
+        val = var_to_address[address]
     return '{0:016b}'.format(val)
 
 

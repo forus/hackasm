@@ -275,10 +275,25 @@ class HackAsmTestCase(unittest.TestCase):
             self.assertEqual(int(actual_code, 2), i)
 
 
-    def test_r_invalid_predefined_symbol(self):
-        with self.assertRaises(ValueError) as err:
-            hackasm.assemble('@R16')
-        self.assertEqual(str(err.exception), '"R16" address symbol is not defined.')
+    def test_r_above_15_is_regular_variable(self):
+        actual_code = hackasm.assemble('@R17')
+        self.assertEqual(int(actual_code, 2), 16)
+
+
+    def test_variable_symbols_memory_alocation(self):
+        actual_code = hackasm.assemble('@a\n@b')
+        code_lines = actual_code.splitlines()
+        self.assertEqual(len(code_lines), 2)
+        self.assertEqual(int(code_lines[0], 2), 16)
+        self.assertEqual(int(code_lines[1], 2), 17)
+
+
+    def test_variable_symbols_usage(self):
+        actual_code = hackasm.assemble('@a\n@a')
+        code_lines = actual_code.splitlines()
+        self.assertEqual(len(code_lines), 2)
+        self.assertEqual(int(code_lines[0], 2), 16)
+        self.assertEqual(int(code_lines[1], 2), 16)
 
 
 if __name__ == '__main__':
