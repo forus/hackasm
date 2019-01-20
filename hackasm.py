@@ -114,11 +114,11 @@ def _to_dest_code(asm_dest):
        dest_code += '1'
     else:
        dest_code += '0'
-    if 'M' in asm_dest:
+    if 'D' in asm_dest:
        dest_code += '1'
     else:
        dest_code += '0'
-    if 'D' in asm_dest:
+    if 'M' in asm_dest:
        dest_code += '1'
     else:
        dest_code += '0'

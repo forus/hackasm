@@ -149,12 +149,12 @@ class HackAsmTestCase(unittest.TestCase):
 
     def test_m_destination(self):
         actual_code = hackasm.assemble('M=0')
-        self.assertEqual(actual_code[10:13], '010')
+        self.assertEqual(actual_code[10:13], '001')
 
 
     def test_d_destination(self):
         actual_code = hackasm.assemble('D=0')
-        self.assertEqual(actual_code[10:13], '001')
+        self.assertEqual(actual_code[10:13], '010')
 
 
     def test_invalid_destination(self):
