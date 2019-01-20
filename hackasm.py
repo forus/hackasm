@@ -2,11 +2,30 @@ import re
 
 
 def assemble(asm):
+    stripped_lines = _strip_asm(asm)
+    labelless_lines, label_symbol_to_code_address = _strip_labels(stripped_lines) 
     variable_symbols = {}
-    return '\n'.join([
-        _assemble_line(_strip_asm_line(line), variable_symbols)
-        for line in asm.splitlines()
-        if _strip_asm_line(line)])
+    code_lines = [ _assemble_line(line, variable_symbols, label_symbol_to_code_address) for line in labelless_lines ]
+    return '\n'.join(code_lines)
+
+
+def _strip_asm(asm):
+    for line in asm.splitlines():
+        stripped_line = _strip_asm_line(line)
+        if stripped_line:
+            yield stripped_line
+
+
+def _strip_labels(stripped_lines):
+    labelless_lines = []
+    label_symbol_to_code_address = {}
+    for line in stripped_lines:
+        if line.startswith('(') and line.endswith(')'):
+            label = line.lstrip('(').rstrip(')')
+            label_symbol_to_code_address[label] = len(labelless_lines)
+        else:
+            labelless_lines.append(line)
+    return labelless_lines, label_symbol_to_code_address
 
 
 def _strip_asm_line(asm):
@@ -14,18 +33,20 @@ def _strip_asm_line(asm):
     return re.sub('\s+', '', no_comment_asm)
 
 
-def _assemble_line(asm, var_to_address):
+def _assemble_line(asm, var_to_address, label_to_code_address):
     if asm.startswith('@'):
-        return _assemble_address_line(asm, var_to_address)
+        return _assemble_address_line(asm, var_to_address, label_to_code_address)
     return _assemble_command_line(asm)
 
 
-def _assemble_address_line(asm, var_to_address):
+def _assemble_address_line(asm, var_to_address, label_to_code_address):
     address = asm.lstrip('@')
     if address.isdigit():
         val = int(address)
     elif address in _predefined_address_symbols:
         val = _predefined_address_symbols[address]
+    elif address in label_to_code_address:
+        val = label_to_code_address[address]
     elif address in var_to_address:
         val = var_to_address[address]
     else:

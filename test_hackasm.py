@@ -296,5 +296,16 @@ class HackAsmTestCase(unittest.TestCase):
         self.assertEqual(int(code_lines[1], 2), 16)
 
 
+    def test_label_symbols(self):
+        actual_code = hackasm.assemble('''(LABEL1)
+        @LABEL2
+        (LABEL2)
+        @LABEL1''')
+        code_lines = actual_code.splitlines()
+        self.assertEqual(len(code_lines), 2)
+        self.assertEqual(int(code_lines[0], 2), 1)
+        self.assertEqual(int(code_lines[1], 2), 0)
+
+
 if __name__ == '__main__':
     unittest.main()
