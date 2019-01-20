@@ -1,16 +1,22 @@
 import re
+import sys
 
 
 def assemble(asm):
-    stripped_lines = _strip_asm(asm)
-    labelless_lines, label_symbol_to_code_address = _strip_labels(stripped_lines)
-    variable_symbols = {}
-    code_lines = [ _assemble_line(line, variable_symbols, label_symbol_to_code_address) for line in labelless_lines ]
+    code_lines = _assemble_lines(asm.splitlines())
     return '\n'.join(code_lines)
 
 
-def _strip_asm(asm):
-    for line in asm.splitlines():
+def _assemble_lines(lines):
+    stripped_lines = _strip_asm(lines)
+    labelless_lines, label_symbol_to_code_address = _strip_labels(stripped_lines)
+    variable_symbols = {}
+    code_lines = [ _assemble_line(line, variable_symbols, label_symbol_to_code_address) for line in labelless_lines ]
+    return code_lines 
+
+
+def _strip_asm(lines):
+    for line in lines:
         stripped_line = _strip_asm_line(line)
         if stripped_line:
             yield stripped_line
@@ -200,3 +206,8 @@ _jumps = {
     'JLE': '110',
     'JMP': '111',
 }
+
+
+if __name__ == '__main__':
+    for code_line in _assemble_lines(sys.stdin.readlines()):
+        print(code_line)
