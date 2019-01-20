@@ -3,7 +3,7 @@ import re
 
 def assemble(asm):
     stripped_lines = _strip_asm(asm)
-    labelless_lines, label_symbol_to_code_address = _strip_labels(stripped_lines) 
+    labelless_lines, label_symbol_to_code_address = _strip_labels(stripped_lines)
     variable_symbols = {}
     code_lines = [ _assemble_line(line, variable_symbols, label_symbol_to_code_address) for line in labelless_lines ]
     return '\n'.join(code_lines)
@@ -22,6 +22,8 @@ def _strip_labels(stripped_lines):
     for line in stripped_lines:
         if line.startswith('(') and line.endswith(')'):
             label = line.lstrip('(').rstrip(')')
+            if label in _predefined_address_symbols:
+                raise ValueError('"{}" is predefined symbol. Hence cannot be label name.'.format(label))
             label_symbol_to_code_address[label] = len(labelless_lines)
         else:
             labelless_lines.append(line)

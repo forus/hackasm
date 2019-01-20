@@ -307,5 +307,11 @@ class HackAsmTestCase(unittest.TestCase):
         self.assertEqual(int(code_lines[1], 2), 0)
 
 
+    def test_forbidden_label_names(self):
+        with self.assertRaises(ValueError) as err:
+            hackasm.assemble('(SCREEN)')
+        self.assertEqual(str(err.exception), '"SCREEN" is predefined symbol. Hence cannot be label name.')
+
+
 if __name__ == '__main__':
     unittest.main()
